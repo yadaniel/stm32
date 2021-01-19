@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "main_fw.h"
+#include "shell.h"
 #include "crc_flash.h"
 #include "uart2_printf.h"
 #include "../Core/Inc/main.h"
@@ -16,6 +17,9 @@ volatile uint8_t tim7_irq = 0;
 
 volatile uint8_t rx_buffer[32] = {0};
 volatile uint8_t rx_idx = 0;
+
+volatile uint8_t tx_buffer[32] = {0,1,2,3,4,5,6,7};
+volatile uint8_t tx_idx = 0;
 
 int main_fw(void) {
     crc_print();
@@ -83,12 +87,26 @@ int main_fw(void) {
 
     // usart2
     RCC->APB1ENR1 |= RCC_APB1ENR1_USART2EN;     // enable clock
-    /* USART2->CR1 |= USART_CR1_RXNEIE; */
-    LL_USART_EnableIT_RXNE(USART2);
+    LL_USART_EnableIT_ERROR(USART2);    // USART2->CR3 |= USART_CR3_EIE;
+    LL_USART_EnableIT_RXNE(USART2);     // USART2->CR1 |= USART_CR1_RXNEIE;
+    LL_USART_EnableIT_TC(USART2);       // USART2->CR1 |= USART_CR1_TCIE;
 
     uint32_t cnt = 0;
 
     while(1) {
+
+        switch(shell_run()) {
+            case IDLE:
+                break;
+            case CMD1:
+                break;
+            case CMD2:
+                break;
+            case CMD3:
+                break;
+            default:
+                break;
+        }
 
         // 100ms delay
         tim7_irq = 0;
@@ -108,16 +126,17 @@ int main_fw(void) {
         //UART2_print_uint32(t6, "tim6_cnt = ");
         //UART2_print_uint32(t7, "tim7_cnt = ");
         //UART2_print_uint32(cnt, "cnt = ");
-        UART2_printf("cnt=%6d, tim6=%6d, tim7=%6d\n", cnt, tim6_cnt, tim7_cnt);
+        //
+        // UART2_printf("cnt=%6d, tim6=%6d, tim7=%6d\n", cnt, tim6_cnt, tim7_cnt);
+        /* if(rx_idx > 0) { */
+        /*     __disable_irq(); */
+        /*     for(uint8_t i=0; i<rx_idx; i++) { */
+        /*         UART2_Sendchar(rx_buffer[i]); */
+        /*     } */
+        /*     rx_idx = 0; */
+        /*     __enable_irq(); */
+        /* } */
 
-        if(rx_idx > 0) {
-            __disable_irq();
-            for(uint8_t i=0; i<rx_idx; i++) {
-                UART2_Sendchar(rx_buffer[i]);
-            }
-            rx_idx = 0;
-            __enable_irq();
-        }
     }
 
     /* while(1) { */

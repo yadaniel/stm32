@@ -233,27 +233,30 @@ void DMA1_Channel7_IRQHandler(void)
 void USART2_IRQHandler(void) {
 
     /* Check for IDLE line interrupt */
-    // if (LL_USART_IsEnabledIT_IDLE(USART2) && LL_USART_IsActiveFlag_IDLE(USART2)) {
-    //    LL_USART_ClearFlag_IDLE(USART2);        /* Clear IDLE line flag */
+    // if(LL_USART_IsEnabledIT_IDLE(USART2) && LL_USART_IsActiveFlag_IDLE(USART2)) {
+    //    LL_USART_ClearFlag_IDLE(USART2);
     //}
     
+
+    // An interrupt is generated when FE=1 or ORE=1 or NF=1 in the USARTx_ISR register.
+    
     /* Check for framing error */
-    if (LL_USART_IsActiveFlag_FE(USART2)) {
+    if(LL_USART_IsActiveFlag_FE(USART2)) {
        LL_USART_ClearFlag_FE(USART2);
     }
 
     /* Check for overrun error */
-    if (LL_USART_IsActiveFlag_ORE(USART2)) {
+    if(LL_USART_IsActiveFlag_ORE(USART2)) {
        LL_USART_ClearFlag_ORE(USART2);
     }
 
     /* Check for noise error */
-    if (LL_USART_IsActiveFlag_NE(USART2)) {
+    if(LL_USART_IsActiveFlag_NE(USART2)) {
        LL_USART_ClearFlag_NE(USART2);
     }
 
-    /* Check for data */
-    if (LL_USART_IsActiveFlag_RXNE(USART2)) {
+    /* Check for rx data */
+    if(LL_USART_IsEnabledIT_RXNE(USART2) && LL_USART_IsActiveFlag_RXNE(USART2)) {
         USART2->CR1 &= ~USART_CR1_RXNEIE;
         extern uint8_t rx_buffer[32];
         extern uint8_t rx_idx;
@@ -264,8 +267,17 @@ void USART2_IRQHandler(void) {
         rx_buffer[rx_idx] = USART2->RDR;
     }
 
-    LL_USART_EnableIT_RXNE(USART2);
-
+    /* Check for tx data */
+    if(LL_USART_IsEnabledIT_TC(USART2) && LL_USART_IsActiveFlag_TC(USART2)) {
+        LL_USART_ClearFlag_TC(USART2);
+        extern uint8_t tx_buffer[32];
+        extern uint8_t tx_idx;
+        USART2->TDR = tx_buffer[tx_idx];
+        tx_idx += 1;
+        if(tx_idx >= sizeof(tx_buffer)/sizeof(tx_buffer[0])) {
+            tx_idx = 0;
+        }
+    }
 
   /* USER CODE BEGIN USART2_IRQn 0 */
 

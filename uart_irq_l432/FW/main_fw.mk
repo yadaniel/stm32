@@ -20,6 +20,7 @@ FW_LDFLAGS =
 C_SOURCES += \
 main_fw.c \
 crc_flash.c \
+shell.c \
 uart2_printf.c
 
 #######################################

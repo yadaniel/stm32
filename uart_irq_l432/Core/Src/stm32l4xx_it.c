@@ -236,10 +236,10 @@ void USART2_IRQHandler(void) {
     // if(LL_USART_IsEnabledIT_IDLE(USART2) && LL_USART_IsActiveFlag_IDLE(USART2)) {
     //    LL_USART_ClearFlag_IDLE(USART2);
     //}
-    
+
 
     // An interrupt is generated when FE=1 or ORE=1 or NF=1 in the USARTx_ISR register.
-    
+
     /* Check for framing error */
     if(LL_USART_IsActiveFlag_FE(USART2)) {
        LL_USART_ClearFlag_FE(USART2);
@@ -258,24 +258,34 @@ void USART2_IRQHandler(void) {
     /* Check for rx data */
     if(LL_USART_IsEnabledIT_RXNE(USART2) && LL_USART_IsActiveFlag_RXNE(USART2)) {
         USART2->CR1 &= ~USART_CR1_RXNEIE;
-        extern uint8_t rx_buffer[32];
-        extern uint8_t rx_idx;
-        rx_idx += 1;
-        if(rx_idx >= sizeof(rx_buffer)/sizeof(rx_buffer[0])) {
+        extern volatile uint8_t rx_buffer[32];
+        extern volatile uint8_t rx_idx;
+        extern volatile uint8_t rx_done;
+        uint8_t c = USART2->RDR;
+        if(rx_done == 0) {
+            rx_buffer[rx_idx] = c;
+            if(c == 0x0D) {
+                rx_done = 1;
+                rx_idx = 0;
+            }
+            rx_idx += 1;
+            if(rx_idx >= sizeof(rx_buffer)/sizeof(rx_buffer[0])) {
+                rx_idx = 0;
+            }
+        } else {
             rx_idx = 0;
         }
-        rx_buffer[rx_idx] = USART2->RDR;
     }
 
     /* Check for tx data */
     if(LL_USART_IsEnabledIT_TC(USART2) && LL_USART_IsActiveFlag_TC(USART2)) {
         LL_USART_ClearFlag_TC(USART2);
-        extern uint8_t tx_buffer[32];
-        extern uint8_t tx_idx;
-        USART2->TDR = tx_buffer[tx_idx];
-        tx_idx += 1;
-        if(tx_idx >= sizeof(tx_buffer)/sizeof(tx_buffer[0])) {
-            tx_idx = 0;
+        extern volatile uint8_t tx_buffer[32];
+        extern volatile uint8_t tx_idx;
+        extern volatile uint8_t tx_stop;
+        if(tx_idx < tx_stop) {
+            USART2->TDR = tx_buffer[tx_idx];
+            tx_idx += 1;
         }
     }
 

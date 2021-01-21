@@ -17,9 +17,11 @@ volatile uint8_t tim7_irq = 0;
 
 volatile uint8_t rx_buffer[32] = {0};
 volatile uint8_t rx_idx = 0;
+volatile uint8_t rx_done = 0;
 
 volatile uint8_t tx_buffer[32] = {0,1,2,3,4,5,6,7};
 volatile uint8_t tx_idx = 0;
+volatile uint8_t tx_stop = 0;
 
 int main_fw(void) {
     crc_print();
@@ -93,20 +95,9 @@ int main_fw(void) {
 
     uint32_t cnt = 0;
 
-    while(1) {
 
-        switch(shell_run()) {
-            case IDLE:
-                break;
-            case CMD1:
-                break;
-            case CMD2:
-                break;
-            case CMD3:
-                break;
-            default:
-                break;
-        }
+    while(1) {
+        shell_run();
 
         // 100ms delay
         tim7_irq = 0;

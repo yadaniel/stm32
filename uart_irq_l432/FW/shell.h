@@ -8,7 +8,7 @@
 #define CMD2    2
 #define CMD3    3
 
-uint8_t shell_run(void);
+void shell_run(void);
 
 #endif  // SHELL_INCLUDED
 

@@ -257,24 +257,29 @@ void USART2_IRQHandler(void) {
 
     /* Check for rx data */
     if(LL_USART_IsEnabledIT_RXNE(USART2) && LL_USART_IsActiveFlag_RXNE(USART2)) {
-        USART2->CR1 &= ~USART_CR1_RXNEIE;
         extern volatile uint8_t rx_buffer[32];
         extern volatile uint8_t rx_idx;
         extern volatile uint8_t rx_done;
-        uint8_t c = USART2->RDR;
+        // uint8_t c = 0;
+        // USART2->RQR |= USART_RQR_RXFRQ;  // clear RXNE flag without reading RDR
+        uint8_t c = USART2->RDR;    // read RDR to clear RXNE flag
+        // RXNE must be cleared, otherwise interrupt routine hangs
         if(rx_done == 0) {
             rx_buffer[rx_idx] = c;
             if(c == 0x0D) {
                 rx_done = 1;
                 rx_idx = 0;
-            }
-            rx_idx += 1;
-            if(rx_idx >= sizeof(rx_buffer)/sizeof(rx_buffer[0])) {
-                rx_idx = 0;
+            } else {
+                rx_idx += 1;
+                if(rx_idx >= sizeof(rx_buffer)/sizeof(rx_buffer[0])) {
+                    rx_idx = 0;
+                }
             }
         } else {
             rx_idx = 0;
         }
+        /* USART2->CR1 &= ~USART_CR1_RXNEIE; */
+        /* LL_USART_EnableIT_RXNE(USART2);     // USART2->CR1 |= USART_CR1_RXNEIE; */
     }
 
     /* Check for tx data */

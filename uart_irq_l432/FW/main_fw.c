@@ -97,7 +97,17 @@ int main_fw(void) {
 
 
     while(1) {
+        // check if command was received and execute command
+        // only one command per main loop cycle evaluated
         shell_run();
+
+        // 100ms delay
+        tim7_irq = 0;
+        while(tim7_irq == 0) {}
+
+        // 100ms delay
+        tim7_irq = 0;
+        while(tim7_irq == 0) {}
 
         // 100ms delay
         tim7_irq = 0;

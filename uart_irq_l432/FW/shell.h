@@ -3,10 +3,12 @@
 
 #include <stdint.h>
 
-#define IDLE    0
-#define CMD1    1
-#define CMD2    2
-#define CMD3    3
+#define ERR     0
+#define IDLE    1
+#define CMD1    2
+#define CMD2    3
+#define CMD3    4
+#define CMD4    5
 
 void shell_run(void);
 

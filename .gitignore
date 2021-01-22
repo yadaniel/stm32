@@ -3,4 +3,5 @@
 *.o
 *.hex
 *.map
+*.bak
 

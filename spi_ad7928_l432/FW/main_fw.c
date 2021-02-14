@@ -7,6 +7,7 @@
 #include "crc_flash.h"
 #include "spibus.h"
 #include "ad7918.h"
+#include "ad7908.h"
 #include "uart2_printf.h"
 #include "../Core/Inc/main.h"
 /* #include "../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h" */
@@ -24,6 +25,9 @@ volatile uint8_t rx_done = 0;
 volatile uint8_t tx_buffer[32] = {0,1,2,3,4,5,6,7};
 volatile uint8_t tx_idx = 0;
 volatile uint8_t tx_stop = 0;
+
+/* float ADnum[7] = {0.0}; */
+int16_t ADnum[7] = {7,6,5,4,3,2,1};
 
 int main_fw(void) {
     crc_print();
@@ -101,7 +105,6 @@ int main_fw(void) {
 
     uint32_t cnt = 0;
 
-
     while(1) {
         // check if command was received and execute command
         // only one command per main loop cycle evaluated
@@ -112,18 +115,24 @@ int main_fw(void) {
         while(tim7_irq == 0) {}
 
         // 100ms delay
-        tim7_irq = 0;
-        while(tim7_irq == 0) {}
+        /* tim7_irq = 0; */
+        /* while(tim7_irq == 0) {} */
 
         // 100ms delay
-        tim7_irq = 0;
-        while(tim7_irq == 0) {}
+        /* tim7_irq = 0; */
+        /* while(tim7_irq == 0) {} */
 
         // 1s delay
         if(tim6_cnt % 2) {
             LL_GPIO_SetOutputPin(LED1_PB3_GPIO_Port, LED1_PB3_Pin);
+            /* LL_GPIO_SetOutputPin(GPIOB, SPIBUS_CS_OUT); */
+            /* LL_GPIO_SetOutputPin(GPIOA, SPIBUS_CLK); */
+            /* LL_GPIO_SetOutputPin(GPIOA, SPIBUS_MOSI); */
         } else {
             LL_GPIO_ResetOutputPin(LED1_PB3_GPIO_Port, LED1_PB3_Pin);
+            /* LL_GPIO_ResetOutputPin(GPIOB, SPIBUS_CS_OUT); */
+            /* LL_GPIO_ResetOutputPin(GPIOA, SPIBUS_CLK); */
+            /* LL_GPIO_ResetOutputPin(GPIOA, SPIBUS_MOSI); */
         }
 
         cnt += 1;

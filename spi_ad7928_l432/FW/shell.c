@@ -143,8 +143,8 @@ void shell_run(void) {
         case IDLE:
             {
                 uint8_t channel = 0;
-                uint16_t u16 = 0;
-                u16 = ad7918_read(&channel);
+                uint16_t u16 = ad7918_read(&channel);
+
                 const uint8_t tbl[] = "0123456789ABCDEF";
                 uint8_t d1 = ((u16 >> 8) & 0xFF);
                 uint8_t d0 = ((u16 >> 0) & 0xFF);

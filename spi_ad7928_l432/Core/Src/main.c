@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "crc.h"
+#include "spi.h"
 #include "dma.h"
 #include "tim.h"
 #include "usart.h"
@@ -97,6 +98,7 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_CRC_Init();
+  MX_SPI1_Init();
   MX_USART2_UART_Init();
   // MX_TIM7_Init();    // in main
   /* USER CODE BEGIN 2 */

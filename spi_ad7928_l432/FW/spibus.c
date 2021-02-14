@@ -46,8 +46,8 @@ void spibus_init_hard_ad7918(void) {
   SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_16BIT;
   SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_HIGH;
   SPI_InitStruct.ClockPhase = LL_SPI_PHASE_1EDGE;
-  /* SPI_InitStruct.NSS = LL_SPI_NSS_HARD_OUTPUT; */
-  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
+  SPI_InitStruct.NSS = LL_SPI_NSS_HARD_OUTPUT;
+  /* SPI_InitStruct.NSS = LL_SPI_NSS_SOFT; */
   SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV64;
   SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
   SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
@@ -186,14 +186,12 @@ uint16_t spibus_send_recv16_ad7918_soft(uint16_t dataOut) {
 
     uint16_t dataIn = 0;
 
-    // assure clock high
-    LL_GPIO_SetOutputPin(GPIOA, SPIBUS_CLK);
-
     // chip select => enable ad7918
     LL_GPIO_ResetOutputPin(GPIOB, SPIBUS_CS_OUT);
 
-    __asm("nop");
-    __asm("nop");
+    /* __asm("nop"); */
+    /* __asm("nop"); */
+    /* __asm("nop"); */
     __asm("nop");
     __asm("nop");
     __asm("nop");
@@ -208,9 +206,14 @@ uint16_t spibus_send_recv16_ad7918_soft(uint16_t dataOut) {
         }
         dataOut <<= 1;  // shift after eval, last iteration is nop
 
-        // data setup time = min 10ns
-        __asm("nop");
-        __asm("nop");
+        // clock high
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
         __asm("nop");
         __asm("nop");
         __asm("nop");
@@ -218,28 +221,26 @@ uint16_t spibus_send_recv16_ad7918_soft(uint16_t dataOut) {
         // set falling clock edge
         LL_GPIO_ResetOutputPin(GPIOA, SPIBUS_CLK);
 
+        // sample data
+        dataIn <<= 1;   // shift before eval, first iteration is nop
+        if(LL_GPIO_IsInputPinSet(GPIOA, SPIBUS_MISO)) {
+            dataIn |= 0x01u;
+        }
+
         // clock low
-        __asm("nop");
-        __asm("nop");
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
+        /* __asm("nop"); */
         __asm("nop");
         __asm("nop");
         __asm("nop");
 
         // set rising clock edge
         LL_GPIO_SetOutputPin(GPIOA, SPIBUS_CLK);
-
-        // clock high
-        // data access time = max 40ns
-        __asm("nop");
-        __asm("nop");
-        __asm("nop");
-        __asm("nop");
-        __asm("nop");
-
-        dataIn <<= 1;   // shift before eval, first iteration is nop
-        if(LL_GPIO_IsInputPinSet(GPIOA, SPIBUS_MISO)) {
-            dataIn |= 0x01u;
-        }
     }
 
     // chip select => disable ad7918

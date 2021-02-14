@@ -33,17 +33,18 @@ uint16_t ad7918_read(uint8_t * channel) {
     /* return (0xAA<<8) | (*channel); */
 
     uint16_t ret = spibus_send_recv16(0x0000);
+
     // AD7918
     //ret = [00/A2/A1/A0/D9/D8/D7/D6]/[D5/D4/D3/D2/D1/D0/00/00]
-    //ret >>= 2u;     // [00/00/00/A2/A1/A0/D9/D8]/[D7/D6/D5/D4/D3/D2/D1/D0]
-    // *channel = (ret >> 10u) & 0x07;
-    // ret &= 0x03FF;
+    ret >>= 2u;     // [00/00/00/A2/A1/A0/D9/D8]/[D7/D6/D5/D4/D3/D2/D1/D0]
+    *channel = (ret >> 10u) & 0x07;
+    ret &= 0x03FF;
     
     // AD7928
     //ret = [00/A2/A1/A0/D11/D10/D9/D8]/[D7/D6/D5/D4/D3/D2/D1/D0]
-    ret >>= 0u;     // [00/A2/A1/A0/D11/D10/D9/D8]/[D7/D6/D5/D4/D3/D2/D1/D0]
-    *channel = (ret >> 12u) & 0x07;
-    ret &= 0x0FFF;
+    // ret >>= 0u;     // [00/A2/A1/A0/D11/D10/D9/D8]/[D7/D6/D5/D4/D3/D2/D1/D0]
+    // *channel = (ret >> 12u) & 0x07;
+    // ret &= 0x0FFF;
 
     return ret;
 }

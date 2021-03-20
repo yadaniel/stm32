@@ -138,6 +138,15 @@ int main_fw(void) {
     /*     print_uint32(fres, "FRESULT f_mount failed with => "); */
     /* } */
 
+    UART2_printf("shell v0.01\r");
+    UART2_printf("CMD1: mount sdcard\r");
+    UART2_printf("CMD2: open file\r");
+    UART2_printf("CMD3: read line from file\r");
+    UART2_printf("CMD4 x y: adds x and y\r");
+    UART2_printf("CMD5: reset controller\r");
+    UART2_printf("CMD6: hal tick\r");
+    UART2_printf("\r");
+
     while(1) {
 
         shell_run();

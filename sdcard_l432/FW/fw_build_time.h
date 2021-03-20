@@ -8,7 +8,7 @@
 #define FW_BUILD_DAYWEEK    6
 
 #define FW_BUILD_HOUR       19
-#define FW_BUILD_MINUTE     38
-#define FW_BUILD_SECOND     56
+#define FW_BUILD_MINUTE     50
+#define FW_BUILD_SECOND     47
 
 #endif  // FW_BUILD_TIME_DEFINED

@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -36,13 +36,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
 #include "ff_gen_drv.h"
+#include "fatfs_sd.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
 /* Disk status */
-static volatile DSTATUS Stat = STA_NOINIT;
+//static volatile DSTATUS Stat = STA_NOINIT;
 
 /* USER CODE END DECL */
 
@@ -80,8 +81,7 @@ DSTATUS USER_initialize (
     BYTE pdrv           /* Physical drive nmuber to identify the drive */
 ) {
     /* USER CODE BEGIN INIT */
-    Stat = STA_NOINIT;
-    return Stat;
+    return SD_disk_initialize(pdrv);
     /* USER CODE END INIT */
 }
 
@@ -94,8 +94,7 @@ DSTATUS USER_status (
     BYTE pdrv       /* Physical drive number to identify the drive */
 ) {
     /* USER CODE BEGIN STATUS */
-    Stat = STA_NOINIT;
-    return Stat;
+    return SD_disk_status(pdrv);
     /* USER CODE END STATUS */
 }
 
@@ -114,7 +113,7 @@ DRESULT USER_read (
     UINT count      /* Number of sectors to read */
 ) {
     /* USER CODE BEGIN READ */
-    return RES_OK;
+    return SD_disk_read(pdrv, buff, sector, count);
     /* USER CODE END READ */
 }
 
@@ -135,7 +134,7 @@ DRESULT USER_write (
 ) {
     /* USER CODE BEGIN WRITE */
     /* USER CODE HERE */
-    return RES_OK;
+    return SD_disk_write(pdrv, buff, sector, count);
     /* USER CODE END WRITE */
 }
 #endif /* _USE_WRITE == 1 */
@@ -154,8 +153,7 @@ DRESULT USER_ioctl (
     void *buff      /* Buffer to send/receive control data */
 ) {
     /* USER CODE BEGIN IOCTL */
-    DRESULT res = RES_ERROR;
-    return res;
+    return SD_disk_ioctl(pdrv, cmd, buff);
     /* USER CODE END IOCTL */
 }
 #endif /* _USE_IOCTL == 1 */

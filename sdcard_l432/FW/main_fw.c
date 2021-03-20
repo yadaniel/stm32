@@ -1,20 +1,17 @@
 #include <stdint.h>
 #include "main_fw.h"
 #include "fatfs.h"
+#include "shell.h"
+#include "uart2_printf.h"
 #include "../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l432xx.h"
-/* #include "../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l3xx.h" */
 
-void UART_Sendchar(uint8_t c) {
-    while(!(USART2->ISR & USART_ISR_TXE)); // block until tx empty
-    USART2->TDR = c;
-}
+volatile uint8_t rx_buffer[32] = {0};
+volatile uint8_t rx_idx = 0;
+volatile uint8_t rx_done = 0;
 
-uint8_t UART_Getchar() {
-    uint8_t c;
-    while(!(USART2->ISR & USART_ISR_RXNE));  // nothing received so just block
-    c = USART2->RDR; // read Receiver buffer register
-    return c;
-}
+volatile uint8_t tx_buffer[32] = {0, 1, 2, 3, 4, 5, 6, 7};
+volatile uint8_t tx_idx = 0;
+volatile uint8_t tx_stop = 0;
 
 typedef struct crc_t {
     uint32_t saved;
@@ -22,37 +19,6 @@ typedef struct crc_t {
 } crc_t;
 
 crc_t crc_data = {.saved = 0x00, .calculated = 0x00};
-
-// d = ba.a2b_hex("00112233445566778899AABBCCDDEEFF0123456789ABCDEF")
-// c = crc.crc.Crc32Bzip2()
-// hex(c.process(d).final() ^ 0xFFFFFFFF) # => '0xc4e0c81'
-// python result is XORed with 0xFFFFFFFF
-// stm32 below is not XORed but has same result
-uint8_t test_crc_(void) {
-    uint32_t buffer[6] = {0x00112233, 0x44556677, 0x8899AABB, 0xCCDDEEFF, 0x01234567, 0x89ABCDEF};
-    CRC->INIT = 0xFFFFFFFF;     // seed
-    CRC->POL = 0x04C11DB7;      // CCITT32
-    CRC->CR = 1;
-    /* CRC->CR = 33; */
-    /* CRC->CR = 1 + 32 + 64; */
-    for(uint8_t i = 0; i < sizeof(buffer) / sizeof(buffer[0]); i += 1) {
-        CRC->DR = buffer[i];
-    }
-    uint32_t crc = CRC->DR;
-    /* crc ^= 0xFFFFFFFF; */
-    /* crc ^= 0x00000000; */
-
-    uint32_t stored_crc = 0xAABBCCDD;
-
-    crc_data.saved = stored_crc;
-    crc_data.calculated = crc;
-
-    uint8_t result = 0;
-    if (crc == stored_crc) {
-        result = 1;
-    }
-    return result;
-}
 
 uint8_t test_crc(void) {
     RCC->AHB1ENR |= RCC_AHB1ENR_CRCEN;
@@ -77,105 +43,108 @@ uint8_t test_crc(void) {
     return result;
 }
 
-void print_uint32(uint32_t u32, const char * msg) {
-    const uint8_t tbl[] = "0123456789ABCDEF";
-
-    while(msg && *msg) {
-        UART_Sendchar(*msg);
-        msg += 1;
-    }
-    uint8_t d3 = ((u32 >> 24) & 0xFF);
-    uint8_t d2 = ((u32 >> 16) & 0xFF);
-    uint8_t d1 = ((u32 >> 8) & 0xFF);
-    uint8_t d0 = ((u32 >> 0) & 0xFF);
-
-    UART_Sendchar(tbl[(d3 >> 4) & 0x0F]);
-    UART_Sendchar(tbl[(d3 >> 0) & 0x0F]);
-    UART_Sendchar(tbl[(d2 >> 4) & 0x0F]);
-    UART_Sendchar(tbl[(d2 >> 0) & 0x0F]);
-    UART_Sendchar(tbl[(d1 >> 4) & 0x0F]);
-    UART_Sendchar(tbl[(d1 >> 0) & 0x0F]);
-    UART_Sendchar(tbl[(d0 >> 4) & 0x0F]);
-    UART_Sendchar(tbl[(d0 >> 0) & 0x0F]);
-
-    UART_Sendchar(0x0D);
-}
-
 int main_fw(void) {
-    /* uint8_t crc_result = test_crc_(); */
-    uint8_t crc_result = test_crc();
-    uint8_t msg[] = "crc passed = ";
+    // check crc
+    UART2_printf("crc passed = %d\r", test_crc());
+    UART2_printf("crc save = %lX\r", crc_data.saved);
+    UART2_printf("crc calc = %lX\r", crc_data.calculated);
 
-    for(uint8_t idx = 0; idx < sizeof(msg) / sizeof(msg[0]) - 1; idx += 1) {
-        UART_Sendchar(msg[idx]);
-    }
-    UART_Sendchar(crc_result + '0');
-    UART_Sendchar(0x0D);
+    // pin locked
+    UART2_printf("GPIOA: any pin locked = %lX\r", LL_GPIO_IsAnyPinLocked(GPIOA));
+    UART2_printf("GPIOB: any pin locked = %lX\r", LL_GPIO_IsAnyPinLocked(GPIOB));
 
-    print_uint32(0xAABBCCDD, "assert 0xAABBCCDD = ");
-    print_uint32(crc_data.saved, "crc save = ");
-    print_uint32(crc_data.calculated, "crc calc = ");
-
-    uint32_t locked = LL_GPIO_IsAnyPinLocked(GPIOA);
-    print_uint32(locked, "GPIOA any pin locked ");
-    locked = LL_GPIO_IsAnyPinLocked(GPIOB);
-    print_uint32(locked, "GPIOB any pin locked ");
-
+    // set defaults
     LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_3);
     /* LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_3); */
 
+    // usart2
+    RCC->APB1ENR1 |= RCC_APB1ENR1_USART2EN;     // enable clock
+    LL_USART_EnableIT_ERROR(USART2);    // USART2->CR3 |= USART_CR3_EIE;
+    LL_USART_EnableIT_RXNE(USART2);     // USART2->CR1 |= USART_CR1_RXNEIE;
+    LL_USART_EnableIT_TC(USART2);       // USART2->CR1 |= USART_CR1_TCIE;
+
+    // init fatfs
     MX_FATFS_Init();
-    FRESULT res;
 
-    //FATFS *ptr_fs = malloc(sizeof(FATFS));
-    //res = f_mount(&ptr_fs, "spi_drive", 0);
-    
-    FATFS fs = {0};
-    FIL f = {0};
-    uint8_t buffer[1024] = {};
+    /* FRESULT fres; */
+    /* FATFS fs = {0}; */
+    /* FIL f = {0}; */
+    /* FILINFO fi = {0}; */
 
-    res = f_mount(&fs, "spi_drive", 0);
-    if(res != FR_OK) {
-        print_uint32(res, "FRESULT f_mount failed with => ");
-    } else {
-        print_uint32(res, "FRESULT f_mount succeeded ... ");
+    /* fres = f_mount(&fs, "", 1);  // [3]:1 => mount now */
+    /* if(fres == FR_NO_FILESYSTEM) { */
+    /*     print_uint32(fres, "FRESULT f_mount => FR_NO_FILESYSTEM"); */
+    /*     fres = f_mkfs("", FM_ANY, 0, &buffer[0], sizeof(buffer)); */
+    /*     if(fres != FR_OK) { */
+    /*         print_uint32(fres, "FRESULT f_mkfs failed with => "); */
+    /*     } else { */
+    /*         fres = f_stat("data.txt", &fi); */
+    /*         if(fres != FR_OK) { */
+    /*             print_uint32(fres, "FRESULT f_stat failed with => "); */
+    /*         } else { */
+    /*             fres = f_open(&f, "data.txt", FA_READ); */
+    /*             if(fres != FR_OK) { */
+    /*                 print_uint32(fres, "FRESULT f_open failed with => "); */
+    /*             } else { */
+    /*                 char line[64]; */
+    /*                 uint8_t cnt = 0; */
+    /*                 while(f_gets(&line[0], sizeof(line), &f)) { */
+    /*                     print_uint32(cnt, "f_gets line => "); */
+    /*                     HAL_Delay(100); */
+    /*                     cnt += 1; */
+    /*                 } */
+    /*             } */
+    /*         } */
+    /*     } */
+    /* } else { */
+    /*     fres = f_open(&f, "sensor.dat", FA_CREATE_ALWAYS); */
+    /*     if(fres != FR_OK) { */
+    /*         print_uint32(fres, "FRESULT f_open failed with => "); */
+    /*     } else { */
+    /*         print_uint32(fres, "FRESULT f_open succeeded ... "); */
+    /*         char line[64] = "sensor data"; */
+    /*         fres = f_puts(&line[0], &f); */
+    /*         fres = f_close(&f); */
+    /*         if(fres != FR_OK) { */
+    /*             print_uint32(fres, "FRESULT f_close failed with => "); */
+    /*         } else { */
+    /*             print_uint32(fres, "FRESULT f_close succeeded ... "); */
+    /*         } */
+    /*     } */
+    /* } */
 
-        res = f_open(&f, "data.dat", FA_WRITE);
-        if(res != FR_OK) {
-            print_uint32(res, "FRESULT f_open failed with => ");
-
-            res = f_mkfs("spi_drive", FM_FAT, 512, &buffer[0], 512);
-            if(res != FR_OK) {
-                print_uint32(res, "FRESULT f_mkfs failed with => ");
-            }
-            else {
-                print_uint32(res, "FRESULT f_mkfs succeeded ... ");
-
-                res = f_open(&f, "data.dat", FA_WRITE);
-                if(res != FR_OK) {
-                    print_uint32(res, "FRESULT f_open failed with => ");
-                } else {
-                    print_uint32(res, "FRESULT f_open succeeded ... ");
-                }
-            }
-        } else {
-            print_uint32(res, "FRESULT f_open succeeded ... ");
-        }
-    }
+    /* fres = f_mount(&fs, "", 1); */
+    /* if(fres == FR_OK) { */
+    /*     fres = f_open(&f, "foo.txt", FA_READ); */
+    /*     if(fres != FR_OK) { */
+    /*         print_uint32(fres, "FRESULT f_open failed with => "); */
+    /*     } else { */
+    /*         print_uint32(fres, "FRESULT f_open succeeded ... "); */
+    /*         char line[64] = {0}; */
+    /*         uint8_t cnt = 0; */
+    /*         while(f_gets(&line[0], sizeof(line), &f)) { */
+    /*             cnt += 1; */
+    /*             print_uint32(cnt, "f_gets line => "); */
+    /*             HAL_Delay(100); */
+    /*         } */
+    /*         fres = f_close(&f); */
+    /*         if(fres != FR_OK) { */
+    /*             print_uint32(fres, "FRESULT f_close failed with => "); */
+    /*         } else { */
+    /*             print_uint32(fres, "FRESULT f_close succeeded ... "); */
+    /*         } */
+    /*     } */
+    /* } else { */
+    /*     print_uint32(fres, "FRESULT f_mount failed with => "); */
+    /* } */
 
     while(1) {
 
-        /* uint8_t c = UART_Getchar(); */
-        /* UART_Sendchar(c); */
-        /* if(c == 'r') { */
-        /*     NVIC_SystemReset(); */
-        /* } */
+        shell_run();
 
-        /* print_uint32(HAL_GetTick(), "HAL_GetTick() => "); */
-
-        HAL_Delay(1000);
+        HAL_Delay(100);
         LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_3);
-        HAL_Delay(1000);
+        HAL_Delay(100);
         LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_3);
 
     }

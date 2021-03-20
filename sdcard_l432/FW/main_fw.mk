@@ -12,7 +12,12 @@ FW/user_diskio.c \
 FW/ff_gen_drv.c \
 FW/diskio.c \
 FW/fatfs.c \
-FW/ff.c
+FW/fatfs_sd.c \
+FW/ff.c \
+FW/shell.c \
+FW/uart2_printf.c
+
+H_SOURCES = $(shell find ./FW -iname *.h)
 
 # FW/sdcard.c
 
@@ -56,9 +61,12 @@ HEX_OUTFILE1 = ./$(BUILD_DIR)/$(TARGET)_filled.hex
 HEX_OUTFILE2 = ./$(BUILD_DIR)/$(TARGET)_filled_signed.hex
 HEX_OUTFILE3 = ./$(BUILD_DIR)/$(TARGET)_signed.hex
 
+debug:
+	@echo $(H_SOURCES)
+
 format:
 	@$(foreach f, $(C_SOURCES), astyle --suffix=none --style=java --pad-oper --add-brackets --add-one-line-brackets $(f);)
-	@$(foreach f, $(C_SOURCES), astyle --suffix=none --style=java --pad-oper --add-brackets --add-one-line-brackets $(f);)
+	@$(foreach f, $(H_SOURCES), astyle --suffix=none --style=java --pad-oper --add-brackets --add-one-line-brackets $(f);)
 
 #######################################
 # size

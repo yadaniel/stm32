@@ -1,0 +1,50 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                // find -iname "*.h" -exec dirname {} \; | uniq.exe
+                "${workspaceFolder}/**",
+                "C:/GNU_Tools_Arm_Embedded/9_2019_q4/arm-none-eabi/include",
+                "./Core/Inc",
+                "./Drivers/CMSIS/Include",
+                "./Drivers/STM32L4xx_HAL_Driver/Inc",
+                "./Drivers/STM32L4xx_HAL_Driver/Inc/Legacy",
+                "./Drivers/CMSIS/Device/ST/STM32L4xx/Include",
+                "./Middlewares/Third_Party/FreeRTOS/Source/include",
+                "./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2",
+                "./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"
+            ],
+            "defines": [
+                "_DEBUG",
+                //"UNICODE",
+                //"_UNICODE"
+            ],
+            //"compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/bin/Hostx64/x64/cl.exe",
+            "compilerPath": "C:/GNU_Tools_Arm_Embedded/9_2019_q4/bin/arm-none-eabi-gcc.exe",
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            //"intelliSenseMode": "windows-msvc-x64"
+            "intelliSenseMode": "gcc-arm"
+        },
+        {
+            "name": "ARM-GCC9",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "\"C:\\GNU_Tools_Arm_Embedded\\9_2019_q4\\bin\\arm-none-eabi-gcc.exe\"",
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-arm",
+            "compilerArgs": [
+                "-Wall -Wno-unused"
+            ]
+        }
+    ],
+    "version": 4
+}

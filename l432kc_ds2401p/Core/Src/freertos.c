@@ -49,6 +49,8 @@ uint64_t data = 0;
 #define DS2401_SUCCESS          0
 #define DS2401_WRONG_CRC        1
 #define DS2401_NO_RESPONSE      2
+
+#define ARR_SIZE(arr) 			(sizeof(arr)/sizeof(arr[0]))
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -58,40 +60,40 @@ struct hardSerial_t HardSerial;
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+    .name = "defaultTask",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for myTask02 */
 osThreadId_t myTask02Handle;
 const osThreadAttr_t myTask02_attributes = {
-  .name = "myTask02",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "myTask02",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTask03 */
 osThreadId_t myTask03Handle;
 const osThreadAttr_t myTask03_attributes = {
-  .name = "myTask03",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "myTask03",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTask04 */
 osThreadId_t myTask04Handle;
 const osThreadAttr_t myTask04_attributes = {
-  .name = "myTask04",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "myTask04",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myQueue01 */
 osMessageQueueId_t myQueue01Handle;
 const osMessageQueueAttr_t myQueue01_attributes = {
-  .name = "myQueue01"
+    .name = "myQueue01"
 };
 /* Definitions for myQueue02 */
 osMessageQueueId_t myQueue02Handle;
 const osMessageQueueAttr_t myQueue02_attributes = {
-  .name = "myQueue02"
+    .name = "myQueue02"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -121,53 +123,53 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   * @retval None
   */
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
+    /* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+    /* USER CODE END Init */
 
-  /* USER CODE BEGIN RTOS_MUTEX */
+    /* USER CODE BEGIN RTOS_MUTEX */
     /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
+    /* USER CODE END RTOS_MUTEX */
 
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
+    /* USER CODE BEGIN RTOS_SEMAPHORES */
     /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
+    /* USER CODE END RTOS_SEMAPHORES */
 
-  /* USER CODE BEGIN RTOS_TIMERS */
+    /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
+    /* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* creation of myQueue01 */
-  myQueue01Handle = osMessageQueueNew (16, sizeof(uint16_t), &myQueue01_attributes);
+    /* Create the queue(s) */
+    /* creation of myQueue01 */
+    myQueue01Handle = osMessageQueueNew (16, sizeof(uint16_t), &myQueue01_attributes);
 
-  /* creation of myQueue02 */
-  myQueue02Handle = osMessageQueueNew (16, sizeof(uint32_t), &myQueue02_attributes);
+    /* creation of myQueue02 */
+    myQueue02Handle = osMessageQueueNew (16, sizeof(uint32_t), &myQueue02_attributes);
 
-  /* USER CODE BEGIN RTOS_QUEUES */
+    /* USER CODE BEGIN RTOS_QUEUES */
     /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
+    /* USER CODE END RTOS_QUEUES */
 
-  /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+    /* Create the thread(s) */
+    /* creation of defaultTask */
+    defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of myTask02 */
-  myTask02Handle = osThreadNew(StartTask02, NULL, &myTask02_attributes);
+    /* creation of myTask02 */
+    myTask02Handle = osThreadNew(StartTask02, NULL, &myTask02_attributes);
 
-  /* creation of myTask03 */
-  myTask03Handle = osThreadNew(StartTask03, NULL, &myTask03_attributes);
+    /* creation of myTask03 */
+    myTask03Handle = osThreadNew(StartTask03, NULL, &myTask03_attributes);
 
-  /* creation of myTask04 */
-  myTask04Handle = osThreadNew(StartTask04, NULL, &myTask04_attributes);
+    /* creation of myTask04 */
+    myTask04Handle = osThreadNew(StartTask04, NULL, &myTask04_attributes);
 
-  /* USER CODE BEGIN RTOS_THREADS */
+    /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
+    /* USER CODE END RTOS_THREADS */
 
-  /* USER CODE BEGIN RTOS_EVENTS */
+    /* USER CODE BEGIN RTOS_EVENTS */
     /* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
+    /* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -178,14 +180,13 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
-{
-  /* USER CODE BEGIN StartDefaultTask */
+void StartDefaultTask(void *argument) {
+    /* USER CODE BEGIN StartDefaultTask */
     /* Infinite loop */
     for(;;) {
         osDelay(1);
     }
-  /* USER CODE END StartDefaultTask */
+    /* USER CODE END StartDefaultTask */
 }
 
 /* USER CODE BEGIN Header_StartTask02 */
@@ -195,169 +196,168 @@ void StartDefaultTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask02 */
-void StartTask02(void *argument)
-{
-  /* USER CODE BEGIN StartTask02 */
+void StartTask02(void *argument) {
+    /* USER CODE BEGIN StartTask02 */
     /* Infinite loop */
 
-	// stm32l432kc => FLASH 256K => 128 pages
-	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
-	/*
-	 0x8000000,0x8000800,0x8001000,0x8001800,0x8002000,0x8002800,0x8003000,0x8003800,
-	 0x8004000,0x8004800,0x8005000,0x8005800,0x8006000,0x8006800,0x8007000,0x8007800,
-	 0x8008000,0x8008800,0x8009000,0x8009800,0x800a000,0x800a800,0x800b000,0x800b800,
-	 0x800c000,0x800c800,0x800d000,0x800d800,0x800e000,0x800e800,0x800f000,0x800f800,
-	 0x8010000,0x8010800,0x8011000,0x8011800,0x8012000,0x8012800,0x8013000,0x8013800,
-	 0x8014000,0x8014800,0x8015000,0x8015800,0x8016000,0x8016800,0x8017000,0x8017800,
-	 0x8018000,0x8018800,0x8019000,0x8019800,0x801a000,0x801a800,0x801b000,0x801b800,
-	 0x801c000,0x801c800,0x801d000,0x801d800,0x801e000,0x801e800,0x801f000,0x801f800,
-	 0x8020000,0x8020800,0x8021000,0x8021800,0x8022000,0x8022800,0x8023000,0x8023800,
-	 0x8024000,0x8024800,0x8025000,0x8025800,0x8026000,0x8026800,0x8027000,0x8027800,
-	 0x8028000,0x8028800,0x8029000,0x8029800,0x802a000,0x802a800,0x802b000,0x802b800,
-	 0x802c000,0x802c800,0x802d000,0x802d800,0x802e000,0x802e800,0x802f000,0x802f800,
-	 0x8030000,0x8030800,0x8031000,0x8031800,0x8032000,0x8032800,0x8033000,0x8033800,
-	 0x8034000,0x8034800,0x8035000,0x8035800,0x8036000,0x8036800,0x8037000,0x8037800,
-	 0x8038000,0x8038800,0x8039000,0x8039800,0x803a000,0x803a800,0x803b000,0x803b800,
-	 0x803c000,0x803c800,0x803d000,0x803d800,0x803e000,0x803e800,0x803f000,0x803f800 -> 0x8040000
-	 */
+    // stm32l432kc => FLASH 256K => 128 pages
+    // hex(0x0800_0000 + 2*2**10*100) => 0x8032000
+    /*
+     0x8000000,0x8000800,0x8001000,0x8001800,0x8002000,0x8002800,0x8003000,0x8003800,
+     0x8004000,0x8004800,0x8005000,0x8005800,0x8006000,0x8006800,0x8007000,0x8007800,
+     0x8008000,0x8008800,0x8009000,0x8009800,0x800a000,0x800a800,0x800b000,0x800b800,
+     0x800c000,0x800c800,0x800d000,0x800d800,0x800e000,0x800e800,0x800f000,0x800f800,
+     0x8010000,0x8010800,0x8011000,0x8011800,0x8012000,0x8012800,0x8013000,0x8013800,
+     0x8014000,0x8014800,0x8015000,0x8015800,0x8016000,0x8016800,0x8017000,0x8017800,
+     0x8018000,0x8018800,0x8019000,0x8019800,0x801a000,0x801a800,0x801b000,0x801b800,
+     0x801c000,0x801c800,0x801d000,0x801d800,0x801e000,0x801e800,0x801f000,0x801f800,
+     0x8020000,0x8020800,0x8021000,0x8021800,0x8022000,0x8022800,0x8023000,0x8023800,
+     0x8024000,0x8024800,0x8025000,0x8025800,0x8026000,0x8026800,0x8027000,0x8027800,
+     0x8028000,0x8028800,0x8029000,0x8029800,0x802a000,0x802a800,0x802b000,0x802b800,
+     0x802c000,0x802c800,0x802d000,0x802d800,0x802e000,0x802e800,0x802f000,0x802f800,
+     0x8030000,0x8030800,0x8031000,0x8031800,0x8032000,0x8032800,0x8033000,0x8033800,
+     0x8034000,0x8034800,0x8035000,0x8035800,0x8036000,0x8036800,0x8037000,0x8037800,
+     0x8038000,0x8038800,0x8039000,0x8039800,0x803a000,0x803a800,0x803b000,0x803b800,
+     0x803c000,0x803c800,0x803d000,0x803d800,0x803e000,0x803e800,0x803f000,0x803f800 -> 0x8040000
+     */
 
-	typedef enum PAGE_ERASE_STATUS {
-		eNOT_CLEANED,
-		eERASE_SUCCESS,
-		eERASE_FAILURE,
-	} PAGE_ERASE_STATUS_t;
+    typedef enum PAGE_ERASE_STATUS {
+        eNOT_CLEANED,
+        eERASE_SUCCESS,
+        eERASE_FAILURE,
+    } PAGE_ERASE_STATUS_t;
 
-	PAGE_ERASE_STATUS_t page_status = eNOT_CLEANED;
+    PAGE_ERASE_STATUS_t page_status = eNOT_CLEANED;
 
-	uint8_t written = 0;
-	uint32_t data1 = 0;
-	uint32_t data2 = 0;
-	//uint32_t * ptr = (uint32_t *)0x8032000; 	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
-	//uint32_t * ptr = (uint32_t *)0x8032000 + 8; 	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
-	//uint32_t * ptr = (uint32_t *)0x8032000 + 16; 	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
-	uint32_t * ptr = (uint32_t *)0x8032000 + 4; 	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
-	// ptr 4 byte aligned, 2 32-bits values per write
+    uint8_t written = 0;
+    uint32_t data1 = 0;
+    uint32_t data2 = 0;
+    //uint32_t * ptr = (uint32_t *)0x8032000; 	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
+    //uint32_t * ptr = (uint32_t *)0x8032000 + 8; 	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
+    //uint32_t * ptr = (uint32_t *)0x8032000 + 16; 	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
+    uint32_t * ptr = (uint32_t *)0x8032000 + 4; 	// hex(0x0800_0000 + 2*2**10*100) => 0x8032000
+    // ptr 4 byte aligned, 2 32-bits values per write
 
-	data = data1;
-	data <<= 32;
-	data |= data2;
+    data = data1;
+    data <<= 32;
+    data |= data2;
 
     for(;;) {
 
         osDelay(1000);
 
         if(page_status == eNOT_CLEANED) {
-        	if((FLASH->SR & FLASH_SR_BSY_Msk) == 0) {
-        		// clear FLASH page
+            if((FLASH->SR & FLASH_SR_BSY_Msk) == 0) {
+                // clear FLASH page
 
-        		// unlock FLASH
-        		if(FLASH->CR & FLASH_CR_LOCK_Msk) {
-        			FLASH->KEYR = ((uint32_t)0x45670123);	// hard fault when wrong sequence
-        			FLASH->KEYR = ((uint32_t)0xCDEF89AB);	// e.g. comment out first or second key
-        		}
+                // unlock FLASH
+                if(FLASH->CR & FLASH_CR_LOCK_Msk) {
+                    FLASH->KEYR = ((uint32_t)0x45670123);	// hard fault when wrong sequence
+                    FLASH->KEYR = ((uint32_t)0xCDEF89AB);	// e.g. comment out first or second key
+                }
 
-        		// wait until done
-        		while(FLASH->SR & FLASH_SR_BSY_Msk) {
-        			// wait for busy to be cleared
-        		}
+                // wait until done
+                while(FLASH->SR & FLASH_SR_BSY_Msk) {
+                    // wait for busy to be cleared
+                }
 
-        		// clear FLASH errors
-        		FLASH->SR |= FLASH_SR_OPTVERR_Msk; 	// FLASH option not valid. Cleared by writing 1.
-        		FLASH->SR |= FLASH_SR_RDERR_Msk; 	// FLASH reading from protected address. Cleared by writing 1.
-        		FLASH->SR |= FLASH_SR_FASTERR_Msk; 	// FLASH fast programming interrupted. Cleared by writing 1.
-        		FLASH->SR |= FLASH_SR_MISERR_Msk; 	// FLASH fast programming data missing. Cleared by wiring 1.
-        		FLASH->SR |= FLASH_SR_PGSERR_Msk; 	// FLASH programming sequence error. Cleared by writing 1.
-        		FLASH->SR |= FLASH_SR_SIZERR_Msk; 	// FLASH not word size access. Cleared by writing 1.
-        		FLASH->SR |= FLASH_SR_PGAERR_Msk;	// FLASH write align error not 64bit row. Cleared by writing 1.
-        		FLASH->SR |= FLASH_SR_WRPERR_Msk; 	// FLASH not writable at address. Cleared by writing 1.
-        		FLASH->SR |= FLASH_SR_PROGERR_Msk; 	// FLASH not 0xFF before write, except 0x00. Cleared by writing 1.
-        		FLASH->SR |= FLASH_SR_OPERR_Msk; 	// FLASH program or erase operation fails. Cleared by wiring 1.
+                // clear FLASH errors
+                FLASH->SR |= FLASH_SR_OPTVERR_Msk; 	// FLASH option not valid. Cleared by writing 1.
+                FLASH->SR |= FLASH_SR_RDERR_Msk; 	// FLASH reading from protected address. Cleared by writing 1.
+                FLASH->SR |= FLASH_SR_FASTERR_Msk; 	// FLASH fast programming interrupted. Cleared by writing 1.
+                FLASH->SR |= FLASH_SR_MISERR_Msk; 	// FLASH fast programming data missing. Cleared by wiring 1.
+                FLASH->SR |= FLASH_SR_PGSERR_Msk; 	// FLASH programming sequence error. Cleared by writing 1.
+                FLASH->SR |= FLASH_SR_SIZERR_Msk; 	// FLASH not word size access. Cleared by writing 1.
+                FLASH->SR |= FLASH_SR_PGAERR_Msk;	// FLASH write align error not 64bit row. Cleared by writing 1.
+                FLASH->SR |= FLASH_SR_WRPERR_Msk; 	// FLASH not writable at address. Cleared by writing 1.
+                FLASH->SR |= FLASH_SR_PROGERR_Msk; 	// FLASH not 0xFF before write, except 0x00. Cleared by writing 1.
+                FLASH->SR |= FLASH_SR_OPERR_Msk; 	// FLASH program or erase operation fails. Cleared by wiring 1.
 
-        		// wait until done
-        		while(FLASH->SR & FLASH_SR_BSY_Msk) {
-        			// wait for busy to be cleared
-        		}
+                // wait until done
+                while(FLASH->SR & FLASH_SR_BSY_Msk) {
+                    // wait for busy to be cleared
+                }
 
-        		// select page to erase and start
-        		FLASH->CR |= FLASH_CR_PER_Msk; 			// set FLASH erase permit
-        		FLASH->CR |= (FLASH_CR_PNB_Msk & (100 << FLASH_CR_PNB_Pos)); 	// select FLASH page number to erase
-        		FLASH->CR |= FLASH_CR_STRT_Msk; 		// start erase
+                // select page to erase and start
+                FLASH->CR |= FLASH_CR_PER_Msk; 			// set FLASH erase permit
+                FLASH->CR |= (FLASH_CR_PNB_Msk & (100 << FLASH_CR_PNB_Pos)); 	// select FLASH page number to erase
+                FLASH->CR |= FLASH_CR_STRT_Msk; 		// start erase
 
-        		// wait until done
-        		while(FLASH->SR & FLASH_SR_BSY_Msk) {
-        			// wait for busy to be cleared
-        		}
+                // wait until done
+                while(FLASH->SR & FLASH_SR_BSY_Msk) {
+                    // wait for busy to be cleared
+                }
 
-        		// check if erase successful
-        		if(FLASH->SR & FLASH_SR_PGSERR_Msk) {
-        			page_status = eERASE_FAILURE;
-        		} else {
-        			page_status = eERASE_SUCCESS;
-        		}
-        	}
+                // check if erase successful
+                if(FLASH->SR & FLASH_SR_PGSERR_Msk) {
+                    page_status = eERASE_FAILURE;
+                } else {
+                    page_status = eERASE_SUCCESS;
+                }
+            }
         } else if (((FLASH->SR & FLASH_SR_BSY_Msk) == 0) && (page_status == eERASE_SUCCESS) && (written == 0)) {
 
-    		// unlock FLASH
-    		if(FLASH->CR & FLASH_CR_LOCK_Msk) {
-    			FLASH->KEYR = ((uint32_t)0x45670123);	// hard fault when wrong sequence
-    			FLASH->KEYR = ((uint32_t)0xCDEF89AB);	// e.g. comment out first or second key
-    		}
+            // unlock FLASH
+            if(FLASH->CR & FLASH_CR_LOCK_Msk) {
+                FLASH->KEYR = ((uint32_t)0x45670123);	// hard fault when wrong sequence
+                FLASH->KEYR = ((uint32_t)0xCDEF89AB);	// e.g. comment out first or second key
+            }
 
-    		// wait until done
-    		while(FLASH->SR & FLASH_SR_BSY_Msk) {
-    			// wait for busy to be cleared
-    		}
+            // wait until done
+            while(FLASH->SR & FLASH_SR_BSY_Msk) {
+                // wait for busy to be cleared
+            }
 
-    		// clear FLASH errors
-    		FLASH->SR |= FLASH_SR_OPTVERR_Msk; 	// FLASH option not valid. Cleared by writing 1.
-    		FLASH->SR |= FLASH_SR_RDERR_Msk; 	// FLASH reading from protected address. Cleared by writing 1.
-    		FLASH->SR |= FLASH_SR_FASTERR_Msk; 	// FLASH fast programming interrupted. Cleared by writing 1.
-    		FLASH->SR |= FLASH_SR_MISERR_Msk; 	// FLASH fast programming data missing. Cleared by wiring 1.
-    		FLASH->SR |= FLASH_SR_PGSERR_Msk; 	// FLASH programming sequence error. Cleared by writing 1.
-    		FLASH->SR |= FLASH_SR_SIZERR_Msk; 	// FLASH not word size access. Cleared by writing 1.
-    		FLASH->SR |= FLASH_SR_PGAERR_Msk;	// FLASH write align error not 64bit row. Cleared by writing 1.
-    		FLASH->SR |= FLASH_SR_WRPERR_Msk; 	// FLASH not writable at address. Cleared by writing 1.
-    		FLASH->SR |= FLASH_SR_PROGERR_Msk; 	// FLASH not 0xFF before write, except 0x00. Cleared by writing 1.
-    		FLASH->SR |= FLASH_SR_OPERR_Msk; 	// FLASH program or erase operation fails. Cleared by wiring 1.
+            // clear FLASH errors
+            FLASH->SR |= FLASH_SR_OPTVERR_Msk; 	// FLASH option not valid. Cleared by writing 1.
+            FLASH->SR |= FLASH_SR_RDERR_Msk; 	// FLASH reading from protected address. Cleared by writing 1.
+            FLASH->SR |= FLASH_SR_FASTERR_Msk; 	// FLASH fast programming interrupted. Cleared by writing 1.
+            FLASH->SR |= FLASH_SR_MISERR_Msk; 	// FLASH fast programming data missing. Cleared by wiring 1.
+            FLASH->SR |= FLASH_SR_PGSERR_Msk; 	// FLASH programming sequence error. Cleared by writing 1.
+            FLASH->SR |= FLASH_SR_SIZERR_Msk; 	// FLASH not word size access. Cleared by writing 1.
+            FLASH->SR |= FLASH_SR_PGAERR_Msk;	// FLASH write align error not 64bit row. Cleared by writing 1.
+            FLASH->SR |= FLASH_SR_WRPERR_Msk; 	// FLASH not writable at address. Cleared by writing 1.
+            FLASH->SR |= FLASH_SR_PROGERR_Msk; 	// FLASH not 0xFF before write, except 0x00. Cleared by writing 1.
+            FLASH->SR |= FLASH_SR_OPERR_Msk; 	// FLASH program or erase operation fails. Cleared by wiring 1.
 
-    		// PER must be cleared when PG is set
-    		FLASH->CR &= ~FLASH_CR_PER_Msk; 	// clear FLASH erase permit
+            // PER must be cleared when PG is set
+            FLASH->CR &= ~FLASH_CR_PER_Msk; 	// clear FLASH erase permit
 
-    		// allow FLASH programming
-    		FLASH->CR |= FLASH_CR_PG_Msk;
+            // allow FLASH programming
+            FLASH->CR |= FLASH_CR_PG_Msk;
 
-    		// wait until done
-    		while(FLASH->SR & FLASH_SR_BSY_Msk) {
-    			// wait for busy to be cleared
-    		}
+            // wait until done
+            while(FLASH->SR & FLASH_SR_BSY_Msk) {
+                // wait for busy to be cleared
+            }
 
-    		// write
-        	FLASH->CR |= FLASH_CR_EOPIE_Msk; 	// allow to set EOP
-        	FLASH->SR |= FLASH_SR_EOP_Msk; 	// clear by writing 1
-        	*ptr = 12345;	 			// only possible to program 2x 32-bit data
-        	*(ptr+1) = 54321;			// see refman
+            // write
+            FLASH->CR |= FLASH_CR_EOPIE_Msk; 	// allow to set EOP
+            FLASH->SR |= FLASH_SR_EOP_Msk; 	// clear by writing 1
+            *ptr = 12345;	 			// only possible to program 2x 32-bit data
+            *(ptr + 1) = 54321;			// see refman
 
-    		// wait until done
-    		while(FLASH->SR & FLASH_SR_BSY_Msk) {
-    			// wait for busy to be cleared
-    		}
+            // wait until done
+            while(FLASH->SR & FLASH_SR_BSY_Msk) {
+                // wait for busy to be cleared
+            }
 
-    		// this bit set only after second written 32-bit value
-    		if(FLASH->SR & FLASH_SR_EOP_Msk) {
-    			FLASH->SR |= FLASH_SR_EOP_Msk; 	// clear by writing 1
-    		}
+            // this bit set only after second written 32-bit value
+            if(FLASH->SR & FLASH_SR_EOP_Msk) {
+                FLASH->SR |= FLASH_SR_EOP_Msk; 	// clear by writing 1
+            }
 
-    		// disallow FLASH programming
-    		FLASH->CR &= ~FLASH_CR_PG_Msk;
+            // disallow FLASH programming
+            FLASH->CR &= ~FLASH_CR_PG_Msk;
 
-        	written = 1;
+            written = 1;
 
-    	} else if ((page_status == eERASE_SUCCESS) && (written == 1)) {
-    		data1 = *ptr; 	// read
-    		data2 = *(ptr+1); 	// read
-    	}
+        } else if ((page_status == eERASE_SUCCESS) && (written == 1)) {
+            data1 = *ptr; 	// read
+            data2 = *(ptr + 1); 	// read
+        }
     }
-  /* USER CODE END StartTask02 */
+    /* USER CODE END StartTask02 */
 }
 
 /* USER CODE BEGIN Header_StartTask03 */
@@ -367,9 +367,8 @@ void StartTask02(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask03 */
-void StartTask03(void *argument)
-{
-  /* USER CODE BEGIN StartTask03 */
+void StartTask03(void *argument) {
+    /* USER CODE BEGIN StartTask03 */
     /* Infinite loop */
 
     uint16_t cnt = 0;
@@ -401,58 +400,58 @@ void StartTask03(void *argument)
                 HardSerial.Number[Idx_u8] = 0u;
             }
         } else {
-        	TIM6_delay_us(240);
+            TIM6_delay_us(240);
 
             // read command 0x33
             // 1
-        	onewire_out(0);
+            onewire_out(0);
             onewire_dir_out();
-            DWT_Delay_us(2);
+            TIM6_delay_us(2);
             onewire_out(1);
-            DWT_Delay_us(115);
+            TIM6_delay_us(115);
             // 1
             onewire_out(0);
-            DWT_Delay_us(2);
+            TIM6_delay_us(2);
             onewire_out(1);
-            DWT_Delay_us(115);
+            TIM6_delay_us(115);
             // 0
             onewire_out(0);
-            DWT_Delay_us(110);
+            TIM6_delay_us(110);
             onewire_out(1);
-            DWT_Delay_us(2);
+            TIM6_delay_us(2);
             // 0
             onewire_out(0);
-            DWT_Delay_us(110);
+            TIM6_delay_us(110);
             onewire_out(1);
-            DWT_Delay_us(2);
+            TIM6_delay_us(2);
             // 1
             onewire_out(0);
-            DWT_Delay_us(2);
+            TIM6_delay_us(2);
             onewire_out(1);
-            DWT_Delay_us(115);
+            TIM6_delay_us(115);
             // 1
             onewire_out(0);
-            DWT_Delay_us(2);
+            TIM6_delay_us(2);
             onewire_out(1);
-            DWT_Delay_us(115);
+            TIM6_delay_us(115);
             // 0
             onewire_out(0);
-            DWT_Delay_us(110);
+            TIM6_delay_us(110);
             onewire_out(1);
-            DWT_Delay_us(2);
+            TIM6_delay_us(2);
             // 0
             onewire_out(0);
-            DWT_Delay_us(110);
+            TIM6_delay_us(110);
             onewire_out(1);
-            DWT_Delay_us(2);
+            TIM6_delay_us(2);
 
             CRC_u8 = 0u;
 
             for(Idx_u8 = 0u; Idx_u8 < 64u; Idx_u8++) {
-            	onewire_out(0);     // acknowledge each bit
+                onewire_out(0);     // acknowledge each bit
                 onewire_dir_out();     // acknowledge each bit
                 onewire_dir_in();
-                DWT_Delay_us(5);
+                TIM6_delay_us(5);
 
                 Bitval_u8 = (onewire_in() == 1u) ? 1u : 0u;
                 shiftToLeft(&(HardSerial.Number[0]), 8u, Bitval_u8);
@@ -463,7 +462,7 @@ void StartTask03(void *argument)
                     CRC_u8 = CRC_u8 ^ 0x0Cu;
                 }
 
-                DWT_Delay_us(60);
+                TIM6_delay_us(60);
             }
 
             onewire_dir_in();
@@ -488,25 +487,25 @@ void StartTask03(void *argument)
             uint8_t n5 = HardSerial.Number[5];
             uint8_t n6 = HardSerial.Number[6];
             uint8_t n7 = HardSerial.Number[7];
-            uint8_t len = snprintf(&msg[0], 64, "[%4d] id = %X,%X,%X,%X,%X,%X,%X,%X\n", cnt, n0, n1, n2, n3, n4, n5, n6, n7);
+            uint8_t len = snprintf(&msg[0], ARR_SIZE(msg), "[%4d] id = %02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X\n", cnt, n0, n1, n2, n3, n4, n5, n6, n7);
             HAL_UART_Transmit(&huart2, (uint8_t *)&msg[0], len, 100);
         }
         break;
 
         case DS2401_NO_RESPONSE: {
-            uint8_t len = snprintf(&msg[0], 64, "[%4d] failed response\n", cnt);
+            uint8_t len = snprintf(&msg[0], ARR_SIZE(msg), "[%4d] failed response\n", cnt);
             HAL_UART_Transmit(&huart2, (uint8_t *)&msg[0], len, 100);
         }
         break;
 
         case DS2401_WRONG_CRC: {
-            uint8_t len = snprintf(&msg[0], 64, "[%4d] failed crc\n", cnt);
+            uint8_t len = snprintf(&msg[0], ARR_SIZE(msg), "[%4d] failed crc\n", cnt);
             HAL_UART_Transmit(&huart2, (uint8_t *)&msg[0], len, 100);
         }
         break;
 
         default: {
-            uint8_t len = snprintf(&msg[0], 64, "[%4d] failed default\n", cnt);
+            uint8_t len = snprintf(&msg[0], ARR_SIZE(msg), "[%4d] failed default\n", cnt);
             HAL_UART_Transmit(&huart2, (uint8_t *)&msg[0], len, 100);
         }
         break;
@@ -514,7 +513,7 @@ void StartTask03(void *argument)
 
         osDelay(500);
     }
-  /* USER CODE END StartTask03 */
+    /* USER CODE END StartTask03 */
 }
 
 /* USER CODE BEGIN Header_StartTask04 */
@@ -524,25 +523,24 @@ void StartTask03(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask04 */
-void StartTask04(void *argument)
-{
-  /* USER CODE BEGIN StartTask04 */
+void StartTask04(void *argument) {
+    /* USER CODE BEGIN StartTask04 */
     /* Infinite loop */
     for(;;) {
 
         osDelay(1000);
 
-    	/*
+        /*
         osDelay(1);
-    	for(uint16_t i=0; i<20; i++) {
-    		TIM6_delay_us(50000);
-    	}
-    	*/
+        for(uint16_t i=0; i<20; i++) {
+        	TIM6_delay_us(50000);
+        }
+        */
 
         HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
     }
-  /* USER CODE END StartTask04 */
+    /* USER CODE END StartTask04 */
 }
 
 /* Private application code --------------------------------------------------*/
@@ -725,8 +723,8 @@ void TIM6_delay_us(uint16_t us) {
     TIM6->CR1 = TIM_CR1_CEN | TIM_CR1_OPM;     // start timer
     //TIM6->CR1 = TIM_CR1_URS | TIM_CR1_ARPE | TIM_CR1_CEN;     // start timer
 
-	while((TIM6->SR & TIM_SR_UIF_Msk) == 0) {
-	}
+    while((TIM6->SR & TIM_SR_UIF_Msk) == 0) {
+    }
 }
 
 /* USER CODE END Application */

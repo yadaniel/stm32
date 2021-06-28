@@ -4,8 +4,16 @@
 #include "stm32f3xx_hal.h"
 #include <sys/stat.h>
 
-//#define RETARGET_TO_UART
-#define RETARGET_TO_ITM
+/*
+	char buffer[32] = {0};
+	//scanf("%s;\n", &buffer[0]); 	// reads until whitespace
+	//gets(&buffer[0]); 			// reads with whitespace but may exceed buffer
+	fgets(&buffer[0], 32, stdin);	// reads with whitespace and up to 31 chars
+	printf("=> %s\n", &buffer[0]);
+*/
+
+#define RETARGET_TO_UART
+//#define RETARGET_TO_ITM
 
 #ifdef RETARGET_TO_UART
 void RetargetInit_UART(UART_HandleTypeDef *huart);

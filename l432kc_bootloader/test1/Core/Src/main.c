@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "crc.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -87,6 +88,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_CRC_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -96,10 +98,15 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
     
     /* USER CODE BEGIN 3 */
+    int main_fw(void);
+    main_fw();
+    // patched at Wed Dec 22 14:31:55 2021
   }
   /* USER CODE END 3 */
+
 }
 
 /**

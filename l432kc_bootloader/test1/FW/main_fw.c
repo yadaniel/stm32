@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <string.h>
+#include "../Core/Inc/rng.h"
 #include "main_fw.h"
 #include "../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h"
 #include "../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l432xx.h"
@@ -120,11 +121,15 @@ void my_printf(const char *fmt, ...) {
 }
 
 int main_fw(void) {
+    uint32_t r = 0;
+    HAL_StatusTypeDef res;
+
     crc_print();
 
     while(1) {
-        HAL_Delay(1000);
-        my_printf("data = %.2f, foo = 0x%04X\n", 0.1234, 0x1234);
+        HAL_Delay(250);
+        res = HAL_RNG_GenerateRandomNumber(&hrng, &r); 
+        my_printf("data = %.2f, foo = 0x%04X, [%d] rand=%4u\n", 0.1234, 0x1234, (res == HAL_OK), (r % 1000));
     }
 
     // test my_printf

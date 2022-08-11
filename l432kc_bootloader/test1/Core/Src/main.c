@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "crc.h"
+#include "rng.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -89,6 +90,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_CRC_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -103,7 +105,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
     int main_fw(void);
     main_fw();
-    // patched at Wed Dec 22 14:31:55 2021
+    // patched at Wed Dec 22 15:03:23 2021
   }
   /* USER CODE END 3 */
 

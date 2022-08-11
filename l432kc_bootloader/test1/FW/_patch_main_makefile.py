@@ -1,5 +1,9 @@
 #!/cygdrive/c/Python39/python
 
+# TODO: LDFLAGS is defined after the inclusion point of the patch in the Makefile
+# TODO: search for LDFLAGS and add new line
+# TODO: LDFLAGS += $(FW_LDFLAGS)
+
 import re, os, sys, time
 
 if os.path.basename(os.getcwd()) != "FW":
@@ -80,6 +84,4 @@ def patch_main():
 if __name__ == "__main__":
     patch_makefile()
     patch_main()
-
-
 

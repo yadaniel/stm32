@@ -1,0 +1,15 @@
+# Format Style Options - Created with Clang Power Tools
+---
+BasedOnStyle: Microsoft
+BreakBeforeBraces: Attach
+ColumnLimit: 300
+IndentCaseLabels: true
+#IndentCaseBlocks: true
+SortIncludes: false
+AlignConsecutiveMacros: true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+...
